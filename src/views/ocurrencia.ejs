@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ocurrencia - FMEA de Proceso</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ocurrencia (FMEA de Proceso)</h1>
+  <p>La ocurrencia es la probabilidad de que un mecanismo/causa específico ocurra. La evaluación de la ocurrencia tiene un significado más allá del valor en sí mismo. Se debe estimar en una escala del 1 al 10, considerando solo el modo de falla y no las fallas de los controles actuales del proceso.</p>
+  <p>Si hay datos estadísticos de procesos similares, deben usarse para ponderar la ocurrencia. Si no, se puede realizar una evaluación subjetiva basada en la tabla siguiente y cualquier dato histórico disponible.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Punt.</th>
+        <th>Probabilidad</th>
+        <th>Ocurrencia de la Causa<br>(Incidentes por ítem o vehículo)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosOcurrencia.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.probabilidad %></td>
+          <td><%= item.ocurrencia %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

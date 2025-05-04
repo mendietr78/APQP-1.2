@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Occurrence - Process FMEA</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Occurrence (Process FMEA)</h1>
+  <p>Occurrence is the likelihood that a specific mechanism/cause will happen. The evaluation of occurrence has meaning beyond the value itself. It should be estimated on a scale from 1 to 10, considering only the failure mode and not the failure of current process controls.</p>
+  <p>If statistical data from similar processes exists, it should be used to assess occurrence. If not, a subjective evaluation can be made based on the table below and any available historical data.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pt.</th>
+        <th>Probability</th>
+        <th>Occurrence of Cause<br>(Incidents per item or vehicle)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosOcurrencia.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.probabilidad %></td>
+          <td><%= item.ocurrencia %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

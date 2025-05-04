@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detección - FMEA de Proceso</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Detección (FMEA de Proceso)</h1>
+  <p>La detección es una evaluación de la probabilidad de que el mejor control detectivo identifique el modo de falla durante el proceso. Se usa una escala de ponderación de 1 a 10, donde un valor menor indica mayor capacidad de detección.</p>
+  <p>Debe asumirse que la falla ya ocurrió y evaluar qué tan eficaz es el proceso para detectarla o evitar que avance. Las verificaciones aleatorias no deben influir en la ponderación.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pt.</th>
+        <th>Oportunidad de Detección</th>
+        <th>Probabilidad de Detección por Controles del Proceso</th>
+        <th>Probabilidad de Detección</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosDeteccion.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.oportunidad %></td>
+          <td><%= item.control %></td>
+          <td><%= item.probabilidad %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

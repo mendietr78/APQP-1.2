@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Severity - Process FMEA</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Severity (Process FMEA)</h1>
+  <p>Severity is the value associated with the most serious effect of the failure mode. It is a relative score within the scope of each FMEA.</p>
+  <p>It is not recommended to modify the scoring criteria for values 9 and 10. Effects with severity 1 do not require further analysis (causes, controls, etc.).</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pt.</th>
+        <th>Effect on Product (Vehicle User)</th>
+        <th>Effect on Manufacturing / Assembly Plant</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosFMEA.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.efectoProducto %></td>
+          <td><%= item.efectoPlanta %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

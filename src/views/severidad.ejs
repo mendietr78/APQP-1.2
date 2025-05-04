@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Severidad - FMEA de Proceso</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Severidad (FMEA de Proceso)</h1>
+  <p>La severidad es el valor asociado al efecto más grave del modo de falla. Es una puntuación relativa dentro del alcance de cada FMEA.</p>
+  <p>No se recomienda modificar los criterios de puntuación para los valores 9 y 10. Los efectos con severidad 1 no requieren análisis adicionales (causas, controles, etc.).</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pt.</th>
+        <th>Efecto en el Producto (Usuario del Vehículo)</th>
+        <th>Efecto en la Planta de Manufactura / Ensamble</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosFMEA.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.efectoProducto %></td>
+          <td><%= item.efectoPlanta %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

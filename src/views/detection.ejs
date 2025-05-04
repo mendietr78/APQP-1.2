@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Detection - Process FMEA</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Detection (Process FMEA)</h1>
+  <p>Detection is an assessment of the likelihood that the best listed control will detect the failure mode during the process. It is a relative ranking within each individual FMEA. Lower detection ratings typically require improved control strategies.</p>
+  <p>If more than one control exists, it's recommended to describe the detection rating alongside the control and record the lowest value in the detection column.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pt.</th>
+        <th>Opportunity for Detection</th>
+        <th>Process Detection Control Description</th>
+        <th>Detection Probability</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datosDeteccion.forEach((item) => { %>
+        <tr>
+          <td><%= item.puntaje %></td>
+          <td><%= item.oportunidad %></td>
+          <td><%= item.descripcion %></td>
+          <td><%= item.probabilidad %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>
