@@ -1,7 +1,82 @@
 <%- include ('partials/_header'); %>
 
-<form action="/db/submit" method="POST">
-  <label for="db1">Ingresa tu usuario de la base de datos</label>
-  <input type="text" name="db1" id="db1" placeholder="Usuario">
-  <button type="submit">Enviar</button>
+<form id="dbForm">
+  <label for="db1">Usuario de la base de datos:</label>
+  <input type="text" name="db1" id="db1" required>
+  <button type="submit">Conectar</button>
+  
+  <div id="loading" style="display:none;">
+    <div class="spinner"></div> Conectando...
+  </div>
+  
+  <div id="error" style="color:red; display:none;"></div>
 </form>
+
+<script>
+document.getElementById('dbForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const form = e.target;
+    const button = form.querySelector('button');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    
+    // Validación
+    const db1 = form.db1.value.trim();
+    if (!db1) {
+        error.textContent = "Ingrese un usuario válido";
+        error.style.display = 'block';
+        return;
+    }
+    
+    // Configurar UI
+    button.disabled = true;
+    loading.style.display = 'block';
+    error.style.display = 'none';
+    
+    try {
+        // Enviar como x-www-form-urlencoded
+        const params = new URLSearchParams();
+        params.append('db1', db1);
+        
+        const response = await fetch('/db/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || "Error de conexión");
+        }
+        
+        window.location.href = "/db";
+    } catch (err) {
+        console.error("Error:", err);
+        error.textContent = err.message;
+        error.style.display = 'block';
+    } finally {
+        button.disabled = false;
+        loading.style.display = 'none';
+    }
+});
+</script>
+
+<style>
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0,0,0,.1);
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>

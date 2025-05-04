@@ -15,24 +15,37 @@ const Ace = require ("../models/ac.js");
 const mongoose = require("mongoose");
 
 
-router.post('/db/submit', (req, res) => {
-    const bd1 = req.body.db1; 
-    const URI ='mongodb+srv://' + bd1 +
-      ':HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp2?retryWrites=true&w=majority';
-      console.log(bd1)
-      mongoose.connect(URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      })
-        .then(() => {
-          console.log("Conexión exitosa a la base de datos");
-        })
-        .catch(error => {
-          console.log("Error al conectar a la base de datos:", error);
+// Ruta modificada
+router.post('/db/submit', async (req, res) => {
+        
+    if (!req.body || !req.body.db1) {
+        console.error("Datos faltantes:", {
+            body: req.body,
+            headers: req.headers
         });
-        res.redirect("/db");
+        return res.status(400).json({ 
+            success: false, 
+            message: "Datos incompletos" 
+        });
+    }
     
-  });
+    const URI = `mongodb+srv://${req.body.db1}:HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp?retryWrites=true&w=majority`;
+    
+    try {
+        await mongoose.connect(URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            connectTimeoutMS: 10000
+        });
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error MongoDB:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+});
 
   router.post('/db/submit1', async (req, res) => {
     const { selectedUserId, bd2 } = req.body; // Obtener el _id del usuario seleccionado y la contraseña
