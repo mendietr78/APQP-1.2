@@ -183,4 +183,6 @@ Cambios que se han integrado:
 
 2.- Las vistas de PPAP necesitan ser convertidas a PDF y es necesario que se incluya en el nombre del archivo el numero de parte que viene de la BD y el nombre de la vista que corresponde a un elemento de PPAP, se dejo funcionando la 02. 
 
-3:- 
+Debido a que el archivo index ya esta muy saturado se abre un nuevo archivo que contendra las rutas del nuevo modulo de caracteristicas. es chrcRoutes.js
+
+Se incluye una vista que permite obtener desde un campo multiopcion los numeros de parte disponibles en la parte superior, mientras que en la parte inferior se muestran las caracteristicas, una vez que se selecciona el numero de parte se pueden agregar o eliminar caracteristicas, y una vez configurado se guarda y mantendra persistencia.

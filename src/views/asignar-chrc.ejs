@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Características</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .characteristic-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+        .assigned-list {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .assigned-char {
+            background-color: #f8f9fa;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .char-badge {
+            margin-right: 10px;
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Asignar Características</h1>
+
+        <% if (success) { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+
+        <form id="assignmentForm">
+            <div class="mb-3">
+                <label for="partSelect" class="form-label">Seleccionar Número de Parte</label>
+                <select class="form-select" id="partSelect" required>
+                    <option value="">-- Seleccione una parte --</option>
+                    <% parts.forEach(part => { %>
+                        <option value="<%= part._id %>"><%= part.pa6 %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Número de Parte (PA6)</label>
+                <input type="text" class="form-control" id="pa6Value" readonly>
+            </div>
+
+            <h3>Características Disponibles</h3>
+            <div id="availableCharacteristics">
+                <% characteristics.forEach(char => { %>
+                    <div class="characteristic-item" data-charid="<%= char._id %>">
+                        <div>
+                            <strong><%= char.nombre || char.ch1 %></strong>
+                            <% if (char.descripcion) { %>
+                                - <%= char.descripcion %>
+                            <% } %>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary add-characteristic">Agregar</button>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div class="assigned-list mt-4">
+                <h4>Características Asignadas <span class="badge bg-secondary" id="assignedCount">0</span></h4>
+                <div id="assignedCharacteristics"></div>
+                <small class="text-muted">Máximo 8 características</small>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">Guardar Asignación</button>
+                <a href="/chrc/asignar" class="btn btn-secondary ms-2">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <template id="assignedCharTemplate">
+        <div class="characteristic-item assigned-char" data-charid="">
+            <div>
+                <span class="badge char-badge">CH<span class="char-position"></span></span>
+                <span class="char-name"></span>
+            </div>
+            <input type="hidden" name="assignedChars[]" value="">
+            <button type="button" class="btn btn-sm btn-danger remove-characteristic">Eliminar</button>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const partSelect = document.getElementById('partSelect');
+            const pa6Input = document.getElementById('pa6Value');
+            const availableChars = document.getElementById('availableCharacteristics');
+            const assignedChars = document.getElementById('assignedCharacteristics');
+            const assignedCount = document.getElementById('assignedCount');
+            const template = document.getElementById('assignedCharTemplate');
+            const form = document.getElementById('assignmentForm');
+
+            async function loadAssignedCharacteristics(partId) {
+                assignedChars.innerHTML = '';
+                assignedCount.textContent = '0';
+
+                if (partId) {
+                    try {
+                        const response = await fetch(`/chrc/obtener-asignaciones/${partId}`);
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Actualizar el campo PA6
+                            pa6Input.value = result.pa6 || '';
+
+                            // Cargar características asignadas
+                            if (result.assignedCharacteristics && result.assignedCharacteristics.length > 0) {
+                                result.assignedCharacteristics.forEach((charId, index) => {
+                                    const availableCharElement = availableChars.querySelector(`.characteristic-item[data-charid="${charId}"]`);
+                                    if (availableCharElement) {
+                                        const charName = availableCharElement.querySelector('strong').textContent.trim();
+                                        addAssignedChar(charId, charName, index + 1);
+                                    }
+                                });
+                                updateAssignedCount();
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error al cargar las características asignadas:', error);
+                        alert('Error al cargar las características asignadas');
+                    }
+                }
+            }
+
+            function addAssignedChar(charId, charName, position) {
+                if (document.querySelector(`.assigned-char[data-charid="${charId}"]`)) {
+                    return; // Ya existe, no agregar duplicados
+                }
+
+                if (assignedChars.querySelectorAll('.assigned-char').length >= 8) {
+                    alert('Solo puedes asignar hasta 8 características');
+                    return;
+                }
+
+                const clone = template.content.cloneNode(true);
+                const newChar = clone.querySelector('.assigned-char');
+                newChar.dataset.charid = charId;
+                newChar.querySelector('.char-name').textContent = charName;
+                newChar.querySelector('.char-position').textContent = position || (assignedChars.children.length + 1);
+                newChar.querySelector('input').value = charId;
+                assignedChars.appendChild(clone);
+                updateAssignedCount();
+            }
+
+            function updateAssignedCount() {
+                const count = assignedChars.querySelectorAll('.assigned-char').length;
+                assignedCount.textContent = count;
+            }
+
+            partSelect.addEventListener('change', function() {
+                const selectedPartId = this.value;
+                loadAssignedCharacteristics(selectedPartId);
+            });
+
+            availableChars.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-characteristic')) {
+                    const charItem = e.target.closest('.characteristic-item');
+                    const charId = charItem.dataset.charid;
+                    const charName = charItem.querySelector('strong').textContent.trim();
+                    addAssignedChar(charId, charName);
+                }
+            });
+
+            assignedChars.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-characteristic')) {
+                    e.target.closest('.assigned-char').remove();
+                    updateAssignedCount();
+                    // Reordenar las posiciones CH
+                    document.querySelectorAll('.assigned-char .char-position').forEach((el, index) => {
+                        el.textContent = index + 1;
+                    });
+                }
+            });
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const assignedItems = document.querySelectorAll('.assigned-char');
+                const partId = partSelect.value;
+
+                if (!partId) {
+                    alert('Por favor seleccione un número de parte');
+                    return;
+                }
+
+                if (assignedItems.length === 0) {
+                    alert('Por favor asigne al menos una característica');
+                    return;
+                }
+
+                const characteristics = Array.from(assignedItems).map(item => ({
+                    charId: item.dataset.charid,
+                    charName: item.querySelector('.char-name').textContent
+                }));
+
+                try {
+                    const response = await fetch('/chrc/guardar-asignacion', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            partId: partId,
+                            characteristics: characteristics
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(result.message);
+                        window.location.href = '/chrc/asignar?success=' + encodeURIComponent(result.message);
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    alert('Error al guardar: ' + err.message);
+                }
+            });
+
+            // Cargar asignaciones si hay un parte seleccionada en la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const partId = urlParams.get('partId');
+            if (partId) {
+                partSelect.value = partId;
+                loadAssignedCharacteristics(partId);
+            }
+        });
+    </script>
+</body>
+</html>

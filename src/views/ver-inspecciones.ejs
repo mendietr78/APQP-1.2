@@ -1,0 +1,27 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>PA6</th>
+      <% for(let i=1; i<=8; i++) { %>
+        <th>CH<%= i %></th>
+      <% } %>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% inspecciones.forEach(ins => { %>
+      <tr>
+        <td><%= ins.pa6 %></td>
+        <% for(let i=1; i<=8; i++) { %>
+          <td><%= ins['ch'+i] || '-' %></td>
+        <% } %>
+        <td>
+          <a href="/chrc/editar/<%= ins._id %>" class="btn btn-sm btn-warning">Editar</a>
+          <form action="/chrc/<%= ins._id %>?_method=DELETE" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
