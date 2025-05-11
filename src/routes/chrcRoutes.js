@@ -38,6 +38,13 @@ router.post('/guardar-asignacion', async (req, res) => {
             });
         }
 
+        if (characteristics.length > 14) {
+            return res.status(400).json({
+                success: false,
+                message: 'No puede asignar más de 14 características'
+            });
+        }
+
         // Buscar si ya existe una entrada para esta parte
         let insps = await Insps.findOne({ partId: partId });
 
@@ -47,13 +54,13 @@ router.post('/guardar-asignacion', async (req, res) => {
             pa6: part.pa6
         };
 
-        // Limpiar todas las características primero
-        for (let i = 1; i <= 8; i++) {
+        // Limpiar todas las características primero (ch1-ch14)
+        for (let i = 1; i <= 14; i++) {
             inspsData[`ch${i}`] = null;
         }
 
-        // Asignar las nuevas características (máximo 8)
-        for (let i = 0; i < Math.min(characteristics.length, 8); i++) {
+        // Asignar las nuevas características (máximo 14)
+        for (let i = 0; i < Math.min(characteristics.length, 14); i++) {
             inspsData[`ch${i + 1}`] = characteristics[i].charId;
         }
 
@@ -88,7 +95,7 @@ router.get('/obtener-asignaciones/:partId', async (req, res) => {
         const assignedCharIds = [];
 
         if (asignacion) {
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 14; i++) {
                 const charId = asignacion[`ch${i}`];
                 if (charId) {
                     assignedCharIds.push(charId.toString()); // Convertir ObjectId a string
